@@ -1,28 +1,36 @@
 import { Controller, Get, Post, Put, Delete } from '@overnightjs/core'
 import { Request, Response } from 'express'
-import { Logger } from '@overnightjs/logger';
 import { Inventory } from '../models/Inventory';
 import { StatusCodes } from 'http-status-codes';
 import moment from 'moment';
-const date = require('date-and-time');
+import sequelize from 'sequelize'
 
 @Controller('api/inventory')
 export class InventoryController {
   @Get('')
   private async get(req: Request, res: Response) {
-    return res.sendStatus(200)
-  }
-
-  @Get(':date')
-  private async getAllByDate(req: Request, res: Response) {
-    console.log(req.params.date)
-    res.jsonp(await Inventory.findAll({ where: {
-          inv_date: req.params.date}}
-          ))
-    return res.sendStatus(200)
+    res.jsonp(await Inventory.findAll())
+    return res.sendStatus(StatusCodes.OK)
   }
 
   @Post()
+  private async getByDate(req: Request, res: Response) {
+    console.log(req.body.date)
+    let statusCode = StatusCodes.OK
+    let output
+    try{
+    output = await Inventory.findAll({ 
+      where: sequelize.where(sequelize.fn('date', sequelize.col('inventoryDateTime')), req.body.date)});
+    }
+    catch (error) {
+      output = error
+      statusCode = StatusCodes.INTERNAL_SERVER_ERROR
+    }
+   res.statusCode = statusCode
+   return res.jsonp(output)
+  }
+
+  @Post('create')
   private async post(req: Request, res:Response) {    
   /*** sample payload 
     {
@@ -34,16 +42,18 @@ export class InventoryController {
   check the time range from_time < to_time and there are no other conflicting existing inventory records
   **/
    let entries = []
-
-   var start_day_time = moment(req.body.inv_date + ' ' + req.body.from_time, 'MM-DD-YYYY HH:mm a')
-   var end_day_time = moment(req.body.inv_date+ ' ' + req.body.to_time, 'MM-DD-YYYY h:mm a')
+   console.log(req) 
+   var start_day_time = moment(req.body.inventoryDate + ' ' + req.body.startTime, 'YYYY-MM-DD HH:mm')
+   console.log(start_day_time)
+   var end_day_time = moment(req.body.inventoryDate+ ' ' + req.body.endTime, 'YYYY-MM-DD h:mm')
+   console.log(end_day_time)
    var timeCounter = moment(start_day_time)
    while(end_day_time.diff(timeCounter) > 0) {
     console.log(timeCounter)
      entries.push({
-       "inv_date": timeCounter.format('MM-DD-YYYY HH:mm'),
-       "inv_total_reservations": req.body.inv_total_reservations,
-       "inv_used_reservations": 0
+       "inventoryDateTime": timeCounter.format('MM-DD-YYYY HH:mm'),
+       "allowedReservations": req.body.allowedReservations,
+       "usedReservations": 0
      })
      //increment timeCounter by 15 min
      timeCounter.add(15, 'm')

@@ -15,11 +15,11 @@ export class User extends Model<User> {
   name: string
 
   @Column
-  email_id: string
+  emailId: string
 
   @CreatedAt
-  create_time: Date
+  createTime: Date
 
   @UpdatedAt
-  update_time: Date
+  updateTime: Date
 }

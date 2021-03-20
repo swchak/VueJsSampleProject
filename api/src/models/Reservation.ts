@@ -19,17 +19,17 @@ export class Reservation extends Model<Reservation> {
 
   @Column
   @ForeignKey(() => User)
-  user_id: number
+  userId: number
 
   @Column
-  party_size: number
+  partySize: number
 
   @Column
-  reservation_date: Date
+  reservationDateTime: Date
 
   @CreatedAt
-  create_time: Date;
+  createTime: Date;
 
   @UpdatedAt
-  update_time: Date;
+  updateTime: Date;
 }

@@ -1,18 +1,25 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Reservations from '../views/Reservations.vue'
+import CreateReservation from '../views/CreateReservation.vue'
+import CreateInventory from '../views/CreateInventory.vue'
 
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    redirect: 'reservations',
+    redirect: 'reservations'
   },
   {
     path: '/reservations',
     name: 'Reservations',
     component: Reservations
+  },
+  {
+    path: '/create-reservation',
+    name: 'CreateReservation',
+    component: CreateReservation
   },
   {
     path: '/inventory',
@@ -22,6 +29,11 @@ const routes: Array<RouteConfig> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/Inventory.vue')
+  },
+  {
+    path: '/inventory/create',
+    name: 'CreateInventory',
+    component: CreateInventory
   }
 ]
 

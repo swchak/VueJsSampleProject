@@ -18,17 +18,17 @@ export class Inventory extends Model<Inventory> {
 id: number
 
 @Column
-inv_date: Date
+inventoryDateTime: Date
 
 @Column
-inv_total_reservations: number
+allowedReservations: number
 
 @Column
-inv_used_reservations: number
+usedReservations: number
 
 @CreatedAt
-create_time: Date;
+createTime: Date;
 
 @UpdatedAt
-update_time: Date;
+updateTime: Date;
 }
