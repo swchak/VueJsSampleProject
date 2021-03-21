@@ -5,7 +5,7 @@
         <v-dialog
           ref="startDialog"
           v-model="startModal"
-          :return-value.sync="start"
+          :return-value.sync="startTime"
           persistent
           width="290px"
         >
@@ -19,7 +19,7 @@
               v-on="on"
             ></v-text-field>
           </template>
-          <v-time-picker v-if="startModal" v-model="startTime" :max="endTime">
+          <v-time-picker v-if="startModal" v-model="startTime" :max="endTime" :allowed-minutes="allowedMinutes">
             <v-spacer></v-spacer>
             <v-btn text color="primary" @click="startModal = false">
               Cancel
@@ -52,7 +52,7 @@
               v-on="on"
             ></v-text-field>
           </template>
-          <v-time-picker v-model="endTime" :min="startTime">
+          <v-time-picker v-model="endTime" :min="startTime" :allowed-minutes="allowedMinutes">
             <v-spacer></v-spacer>
             <v-btn text color="primary" @click="endModal = false">
               Cancel
@@ -81,15 +81,13 @@ export default Vue.extend({
     }
   },
   methods: {
-    allowedStep: m => m % 15 === 0
+    allowedMinutes: m => m % 15 === 0
   },
   watch: {
     startTime: function(val) {
-      console.log('time changed')
       this.$emit('start-time-changed', val)
     },
     endTime: function(val) {
-      console.log('time changed')
       this.$emit('end-time-changed', val)
     }
   }

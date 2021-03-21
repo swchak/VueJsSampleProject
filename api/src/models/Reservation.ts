@@ -5,7 +5,9 @@ import {
   Model,
   PrimaryKey, Table,
   UpdatedAt,
-  AutoIncrement
+  AutoIncrement,
+  BelongsTo,
+  HasOne
 } from 'sequelize-typescript'
 import { User } from './User';
 
@@ -20,6 +22,9 @@ export class Reservation extends Model<Reservation> {
   @Column
   @ForeignKey(() => User)
   userId: number
+
+  @BelongsTo(() => User, 'userId')
+  user: User
 
   @Column
   partySize: number

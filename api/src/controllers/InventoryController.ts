@@ -15,7 +15,6 @@ export class InventoryController {
 
   @Post()
   private async getByDate(req: Request, res: Response) {
-    console.log(req.body.date)
     let statusCode = StatusCodes.OK
     let output
     try{
@@ -31,46 +30,42 @@ export class InventoryController {
   }
 
   @Post('create')
-  private async post(req: Request, res:Response) {    
-  /*** sample payload 
+  private async post(req: Request, res:Response) {
+    /*** sample payload 
     {
-      "inv_date" : "2021-03-24",
-      "from_time": "01:00 PM",
-      "to_time": "03:00 PM",
-      "inv_total_reservations": 2
+      "inventoryDate" : "2021-03-24",
+      "startTime": "01:00",
+      "endTime": "03:00",
+      "allowedReservations": 2
     }   
   check the time range from_time < to_time and there are no other conflicting existing inventory records
   **/
-   let entries = []
-   console.log(req) 
-   var start_day_time = moment(req.body.inventoryDate + ' ' + req.body.startTime, 'YYYY-MM-DD HH:mm')
-   console.log(start_day_time)
-   var end_day_time = moment(req.body.inventoryDate+ ' ' + req.body.endTime, 'YYYY-MM-DD h:mm')
-   console.log(end_day_time)
-   var timeCounter = moment(start_day_time)
-   while(end_day_time.diff(timeCounter) > 0) {
-    console.log(timeCounter)
-     entries.push({
-       "inventoryDateTime": timeCounter.format('MM-DD-YYYY HH:mm'),
-       "allowedReservations": req.body.allowedReservations,
-       "usedReservations": 0
-     })
-     //increment timeCounter by 15 min
-     timeCounter.add(15, 'm')
-     console.log(end_day_time.diff(timeCounter))
-   }
+    let entries = []
+    var start_day_time = moment(
+      req.body.inventoryDate + ' ' + req.body.startTime,
+      'YYYY-MM-DD HH:mm'
+    )
+    var end_day_time = moment(req.body.inventoryDate + ' ' + req.body.endTime, 'YYYY-MM-DD h:mm')
+    var timeCounter = moment(start_day_time)
+    while (end_day_time.diff(timeCounter) > 0) {
+      entries.push({
+        inventoryDateTime: timeCounter.format('MM-DD-YYYY HH:mm'),
+        allowedReservations: req.body.allowedReservations,
+        usedReservations: 0,
+      })
+      //increment timeCounter by 15 min
+      timeCounter.add(15, 'm')
+    }
 
-   console.log(entries)
-   var result;
-   try {
-    var created = await Inventory.bulkCreate(entries)
-    result = res.status(StatusCodes.CREATED).json(created)
-   }
-   catch(error){
-    result = res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-   }
-    
-  return result
+    var result
+    try {
+      var created = await Inventory.bulkCreate(entries)
+      result = res.status(StatusCodes.CREATED).json(created)
+    } catch (error) {
+      result = res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+    }
+
+    return result
   }
 
  @Put(':id')
@@ -98,9 +93,7 @@ export class InventoryController {
   @Delete(':id')
   private async delete(req: Request, res: Response) {
     try {
-      console.log(req.params.id)
       let toDelete = await Inventory.findOne({ where: { id: req.params.id }})
-      console.log(toDelete)
       await toDelete.destroy()
       return res.status(StatusCodes.OK).json(toDelete);
     } catch(error) {

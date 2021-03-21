@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Reservations from '../views/Reservations.vue'
 import CreateReservation from '../views/CreateReservation.vue'
 import CreateInventory from '../views/CreateInventory.vue'
+import NotFound from '../views/NotFound.vue'
 
 Vue.use(VueRouter)
 
@@ -34,6 +35,10 @@ const routes: Array<RouteConfig> = [
     path: '/inventory/create',
     name: 'CreateInventory',
     component: CreateInventory
+  },
+  { 
+    path: '*', 
+    component: NotFound 
   }
 ]
 

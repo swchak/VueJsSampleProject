@@ -8,13 +8,13 @@
       </v-card-title>
 
       <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
-        <v-tab v-for="item in items" :key="item">
+        <v-tab v-for="(item, key) in items" :key="key">
           <router-link :to="item.routerlink">{{ item.title }}</router-link>
         </v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="tab">
-        <v-tab-item v-for="item in items" :key="item">
+        <v-tab-item v-for="(item, key) in items" :key="key">
           <div style="align-content: center">
             <router-view></router-view>
           </div>
@@ -29,6 +29,7 @@ import Vue from 'vue'
 export default Vue.extend({
   data() {
     return {
+      tab: null,
       items: [
         {
           title: 'View Inventory',

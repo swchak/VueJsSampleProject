@@ -6,8 +6,6 @@
         @start-time-changed="onStartTimeChanged"
         @end-time-changed="onEndTimeChanged"
       ></time-picker>
-      <!-- <time-picker title='Select Start Time' @time-changed="onStartTimeChanged"></time-picker>
-      <time-picker title='Select End Time'  @time-changed="onEndTimeChanged"></time-picker> -->
     </div>
     <v-spacer></v-spacer>
     <v-text-field
@@ -41,7 +39,7 @@ export default Vue.extend({
       rules: [
         value => !!value || 'Required.',
         value =>
-          (value.length >= 0 && !isNaN(value)) || 'Numbers are only allowed'
+          !isNaN(value) || 'Numbers are only allowed'
       ],
       newItem: new InventoryModel({
         inventoryDate: null,
@@ -54,22 +52,22 @@ export default Vue.extend({
   },
   methods: {
     async saveInventory() {
-      console.log(this.newItem)
-      const { data: created } = await inventorySvc.default.postInventory(
-        this.newItem
-      )
-      console.log(created)
-      this.showAlertSuccess('Successfully created inventory')
+      try{
+        const { data: created } = await inventorySvc.default.postInventory(this.newItem)
+        alert('Successfully created inventory')
+        this.$router.push({ name: 'Inventory'})
+      } catch (error) {
+        alert(error)
+      }
+
     },
     onDateChanged(val) {
       this.newItem.inventoryDate = val
     },
     onStartTimeChanged(val) {
-      console.log('start time changed')
       this.newItem.startTime = val
     },
     onEndTimeChanged(val) {
-      console.log('end time changed')
       this.newItem.endTime = val
     }
   }

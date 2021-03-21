@@ -20,7 +20,7 @@
             v-on="on"
           ></v-text-field>
         </template>
-        <v-date-picker v-model="date" no-title scrollable>
+        <v-date-picker v-model="date" no-title scrollable :allowed-dates="allowedDates">
           <v-spacer></v-spacer>
           <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
           <v-btn text color="primary" @click="$refs.menu.save(date)">
@@ -34,6 +34,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import * as moment from 'moment'
+
 export default Vue.extend({
   data: () => ({
     date: null,
@@ -41,13 +43,18 @@ export default Vue.extend({
     modal: false,
     menu2: false
   }),
-
+  methods: {
+    allowedDates(_date) {
+     const today = moment.default();
+     const dateToCheck = moment.default(_date);
+     return dateToCheck.diff(today) >= 0
+    }
+  },
   mounted() {
     this.date = new Date().toISOString().substr(0, 10)
   },
   watch: {
     date: function(val) {
-      console.log('date changed to' + val)
       this.$emit('date-changed', val)
     }
   }

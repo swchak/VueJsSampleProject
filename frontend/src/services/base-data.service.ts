@@ -23,6 +23,7 @@ export default class BaseDataService {
 
   fixResponse(response: any, dataType: any) {
     const body = response.data || {}
+    console.log(body)
     if (Array.isArray(body)) {
       return body.map(item => new dataType(item))
     } else {

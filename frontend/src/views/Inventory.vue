@@ -1,5 +1,6 @@
 <template>
   <div class="inventory-flex-container">
+
     <div class="inventory-flex-item">
       <select-date @date-changed="onDateChanged"></select-date>
     </div>
@@ -18,6 +19,7 @@
 <script>
 import SelectDate from '../components/SelectDate.vue'
 import * as inventorySvc from '../services/inventory.service'
+import moment from "moment"
 
 export default {
   components: { SelectDate },
@@ -44,20 +46,20 @@ export default {
   },
   methods: {
     async onDateChanged(val) {
-      console.log('inside onDateChanged')
       try {
-        this.inventoryItems = await inventorySvc.default.getInventoryList({
+        const itemsList = await inventorySvc.default.getInventoryList({
           date: val
         })
-        console.log(this.inventoryItems)
-        // this.inventoryItems = await axios.post(
-        //   'http://localhost:8080/api/inventory',
-        //   {
-        //     date: val
-        //   }
-        // )
+
+        this.inventoryItems = itemsList.map(item => {
+          return {
+            inventoryDateTime: moment(item.inventoryDateTime).local().format('ddd MMM DD YYYY hh:mm a'),
+            allowedReservations: item.allowedReservations,
+            usedReservations: item.usedReservations
+          }
+        })
       } catch (error) {
-        console.log(error)
+        alert(error)
       }
     }
   }

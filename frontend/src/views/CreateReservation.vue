@@ -1,22 +1,22 @@
 <template>
   <v-form id="create-reservation" ref="form" v-model="valid" lazy-validation>
     <v-text-field
-      v-model="name"
+      v-model="newReservationItem.userName"
       :counter="10"
-      :rules="nameRules"
       label="Name"
       required
+      :rules="rules.userName"
     ></v-text-field>
 
     <v-text-field
-      v-model="email"
-      :rules="emailRules"
+      v-model="newReservationItem.userEmail"
       label="E-mail"
       required
+      :rules="rules.userEmail"
     ></v-text-field>
     <select-date @date-changed="onDateChanged"></select-date>
     <v-select
-      v-model="newReservationItem.reservationDateTime"
+      v-model="newReservationItem.inventoryItemId"
       :items="inventoryItems"
       :item-text="'inventoryDateTime'"
       :item-value="'id'"
@@ -24,8 +24,14 @@
       label="Select Time Slot to Reserve"
       required
     ></v-select>
+       <v-text-field
+      v-model="newReservationItem.partySize"
+      label="Party Size"
+      required
+      :rules="rules.partySize"
+    ></v-text-field>
 
-    <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">
+    <v-btn :disabled="!valid" color="success" class="mr-4" @click="saveReservation">
       Reserve
     </v-btn>
   </v-form>
@@ -35,6 +41,7 @@
 import Vue from 'vue'
 import SelectDate from '../components/SelectDate.vue'
 import * as inventorySvc from '../services/inventory.service'
+import * as reservationSvc from '../services/reservation.service'
 import { ReservationModel } from '../models/reservation.model'
 
 export default Vue.extend({
@@ -42,8 +49,10 @@ export default Vue.extend({
   components: { SelectDate },
   data() {
     return {
+      valid: false,
       inventoryItems: [],
-      newReservationItem: new ReservationModel({})
+      newReservationItem: new ReservationModel({}),
+      rules: ReservationModel.dataValidators()
     }
   },
   methods: {
@@ -56,11 +65,17 @@ export default Vue.extend({
           .then(response => {
             this.inventoryItems = response
           })
-        console.log(this.inventoryItems)
       } catch (error) {
-        console.log(error)
+        alert(error)
       }
-    }
+    },
+  async saveReservation() {
+    await reservationSvc.default.postReservation(this.newReservationItem)
+    .then(response => {
+      alert('saved reservation successfully')
+    })
+    .catch(error => alert(error))
+  }
   }
 })
 </script>
