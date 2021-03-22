@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row justify="space-around" align="center">
+    <v-row justify="space-in-between" align="left">
       <v-col style="width: 350px; flex: 0 1 auto;">
         <v-dialog
           ref="startDialog"

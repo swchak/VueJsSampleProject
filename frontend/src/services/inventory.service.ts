@@ -1,5 +1,4 @@
 import { InventoryModel } from '@/models/inventory.model'
-import { InventoryItemModel } from '@/models/inventory-item.model'
 import BaseDataService from './base-data.service'
 
 export class InventoryService extends BaseDataService {
@@ -7,7 +6,7 @@ export class InventoryService extends BaseDataService {
     return this.post('inventory/create', inventory, InventoryModel)
   }
   getInventoryList(queryPayload: any) {
-    return this.post('inventory', queryPayload, InventoryItemModel)
+    return this.post('inventory/list', queryPayload, InventoryModel)
   }
 }
 

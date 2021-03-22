@@ -1,32 +1,27 @@
 import { BaseModel } from './base.model'
+import { UsedInventoryModel } from './used-inventory.model'
 
 export class InventoryModel extends BaseModel {
-  inventoryDate: string
-  startTime: string
-  endTime: string
+  startDateTime: string
+  endDateTime: string
   allowedReservations: number
-  usedReservations: number
+  usedInventories: UsedInventoryModel[]
 
   constructor(data) {
     super(data)
     const d = data || {}
-    this.inventoryDate = d.inventoryDate
-    this.startTime = d.startTime
-    this.endTime = d.endTime
+    this.startDateTime = d.startDateTime
+    this.endDateTime = d.endDateTime
     this.allowedReservations = d.allowedReservations
-    this.usedReservations = d.usedReservations
+    this.usedInventories = d.usedInventories ? d.usedInventories : null
   }
 
   toJSON() {
     return {
       ...super.toJSON(),
-      inventoryDate: this.inventoryDate ? this.inventoryDate : null,
-      startTime: this.startTime ? this.startTime : null,
-      endTime: this.endTime ? this.endTime : null,
+      startDateTime: this.startDateTime ? this.startDateTime : null,
+      endDateTime: this.endDateTime ? this.endDateTime : null,
       allowedReservations: this.allowedReservations
-        ? this.allowedReservations
-        : 0,
-      usedReservations: this.usedReservations ? this.usedReservations : 0
     }
   }
 }

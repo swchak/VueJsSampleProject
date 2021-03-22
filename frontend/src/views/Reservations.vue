@@ -6,8 +6,8 @@
     <div class="res-flex-item">
       <v-data-table
         :headers="headers"
-        :items="reservationItems"
-        :items-per-page="5"
+        :items="localReservationItems"
+        :items-per-page="10"
         class="elevation-1"
       >
       </v-data-table>
@@ -18,6 +18,7 @@
 <script>
 import SelectDate from '../components/SelectDate.vue'
 import * as reservationSvc from '../services/reservation.service'
+import moment from 'moment'
 
 
 export default {
@@ -43,16 +44,24 @@ export default {
           value: 'partySize'
         }
       ],
-      reservationItems: []
+      localReservationItems: []
     }
   },
   methods: {
     async onDateChanged(val) {
       try {
-        this.reservationItems = await reservationSvc.default.getReservationsList({
+        const reservationItems = await reservationSvc.default.getReservationsList({
             date: val
           }
         )
+        this.localReservationItems = reservationItems.map(reservationItem => {
+          return {
+            userName: reservationItem.user.name,
+            userEmail: reservationItem.user.email,
+            reservationDateTime: moment(reservationItem.usedInventory.reservationDateTime).local().format('MMM DD YYYY hh:mm a'),
+            partySize: reservationItem.partySize
+          }
+        })
       } catch (error) {
         alert(error)
       }
@@ -65,14 +74,19 @@ export default {
 .res-flex-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  width: 100%;
+  justify-content: left;
+  margin-left: 100px;
+  margin-right: 100px;
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 .res-flex-item-first {
-  flex: 0 0 30%;
+  flex: 1 0 auto;
 }
 .res-flex-item {
-  flex: 1 0 70%;
+  flex: 1 0 auto;
+  padding-top: 30px;
+  padding-bottom: 30;
 }
 </style>

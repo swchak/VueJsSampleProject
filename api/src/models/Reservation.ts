@@ -9,6 +9,7 @@ import {
   BelongsTo,
   HasOne
 } from 'sequelize-typescript'
+import { UsedInventory } from './UsedInventory';
 import { User } from './User';
 
 
@@ -30,11 +31,15 @@ export class Reservation extends Model<Reservation> {
   partySize: number
 
   @Column
-  reservationDateTime: Date
+  @ForeignKey(() => UsedInventory)
+  usedInventoryId: number
+
+  @BelongsTo(() => UsedInventory, 'usedInventoryId')
+  usedInventory: UsedInventory
 
   @CreatedAt
-  createTime: Date;
+  createTime: Date
 
   @UpdatedAt
-  updateTime: Date;
+  updateTime: Date
 }

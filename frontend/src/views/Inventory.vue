@@ -1,25 +1,22 @@
 <template>
-  <div class="inventory-flex-container">
-
-    <div class="inventory-flex-item">
+  <v-card class="inventory-flex-container">
+    <v-card-title class="inventory-flex-item-first"> 
       <select-date @date-changed="onDateChanged"></select-date>
-    </div>
-    <div class="inventory-flex-item">
-      <v-data-table
-        :headers="headers"
-        :items="inventoryItems"
-        :items-per-page="5"
-        class="elevation-1"
-      >
-      </v-data-table>
-    </div>
-  </div>
+    </v-card-title>
+    <v-data-table
+      :headers="mainHeaders"
+      :items="inventoryItems"
+       item-key="id"
+       class="inventory-flex-item"
+       >
+    ></v-data-table>
+  </v-card>
 </template>
 
 <script>
 import SelectDate from '../components/SelectDate.vue'
 import * as inventorySvc from '../services/inventory.service'
-import moment from "moment"
+import moment from 'moment'
 
 export default {
   components: { SelectDate },
@@ -27,20 +24,22 @@ export default {
 
   data() {
     return {
-      headers: [
+      mainHeaders: [
         {
-          text: 'Time Slot',
-          value: 'inventoryDateTime'
+          text: 'Date/Time',
+          value: 'dateTime',
+          sortable: false,
+          align: 'left'
         },
         {
-          text: 'Reservations Allowed',
+          text: 'Allowed Reservations',
           value: 'allowedReservations'
         },
         {
-          text: 'Reservations Used',
+          text: 'Used Reservations',
           value: 'usedReservations'
         }
-      ],
+        ],
       inventoryItems: []
     }
   },
@@ -50,14 +49,21 @@ export default {
         const itemsList = await inventorySvc.default.getInventoryList({
           date: val
         })
-
-        this.inventoryItems = itemsList.map(item => {
-          return {
-            inventoryDateTime: moment(item.inventoryDateTime).local().format('ddd MMM DD YYYY hh:mm a'),
-            allowedReservations: item.allowedReservations,
-            usedReservations: item.usedReservations
-          }
+        console.log(itemsList)
+        const transformInvItems = []
+        itemsList.forEach(item => {
+          const usedInvList = item.usedInventories
+          item.usedInventories.forEach(usedInv => {
+            transformInvItems.push({
+              dateTime: moment(usedInv.reservationDateTime).local().format('MMM DD YYYY hh:mm a'),
+              allowedReservations: item.allowedReservations,
+              usedReservations: usedInv.usedReservations
+            })
+          })
         })
+
+        this.inventoryItems = transformInvItems
+             console.log(this.inventoryItems)
       } catch (error) {
         alert(error)
       }
@@ -75,9 +81,15 @@ export default {
 }
 
 .inventory-flex-item-first {
-  flex: 0 0 30%;
+  flex: 0 1 100%;
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-top: 30px;
 }
 .inventory-flex-item {
   flex: 1 0 70%;
+  padding-left: 60px;
+  padding-right: 60px
 }
+
 </style>

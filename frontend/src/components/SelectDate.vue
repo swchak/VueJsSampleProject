@@ -6,8 +6,6 @@
         v-model="menu"
         :close-on-content-click="false"
         :return-value.sync="date"
-        transition="scale-transition"
-        offset-y
         min-width="auto"
       >
         <template v-slot:activator="{ on, attrs }">

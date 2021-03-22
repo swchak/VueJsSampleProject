@@ -1,34 +1,34 @@
 import {
-  AllowNull,
   Column,
   CreatedAt,
-  ForeignKey,
+  HasMany,
   Model,
   PrimaryKey, Table,
-  UpdatedAt,
-  DataType,
-  HasOne,
-  AutoIncrement
+  UpdatedAt
 } from 'sequelize-typescript'
+import { UsedInventory } from './UsedInventory'
 
 @Table({ tableName: 'inventory' })
 export class Inventory extends Model<Inventory> {
-@PrimaryKey
-@Column({ autoIncrement: true })
-id: number
+  @PrimaryKey
+  @Column({ autoIncrement: true })
+  id: number
 
-@Column
-inventoryDateTime: Date
+  @Column
+  startDateTime: Date
 
-@Column
-allowedReservations: number
+  @Column
+  endDateTime: Date
 
-@Column
-usedReservations: number
+  @Column
+  allowedReservations: number
 
-@CreatedAt
-createTime: Date;
+  @HasMany(() => UsedInventory)
+  usedInventories: UsedInventory[]
 
-@UpdatedAt
-updateTime: Date;
+  @CreatedAt
+  createTime: Date
+
+  @UpdatedAt
+  updateTime: Date
 }

@@ -1,26 +1,34 @@
 import { BaseModel } from './base.model'
+import { UsedInventoryModel } from './used-inventory.model'
+import { UserModel } from './user.model'
 
 export class ReservationModel extends BaseModel {
+  // fields required for create entity
   partySize: string
   userName: string
   userEmail: string
-  inventoryItemId: number
-  reservationDateTime: string
+  usedInventoryId: string
+
+  //fields required for parsing api response
+  user: UserModel
+  usedInventory: UsedInventoryModel
 
   constructor(data) {
     super(data)
     const d = data || {}
-    this.userName = d.userName
-    this.userEmail = d.userEmail
+    this.userName = d.userName ? d.userName : null
+    this.userEmail = d.userEmail ? d.userEmail : null
     this.partySize = d.partySize
-    this.inventoryItemId = d.inventoryItemId
-    this.reservationDateTime = d.reservationDateTime
+    this.usedInventoryId = d.usedInventoryId ? d.usedInventoryId : null
+    // for parsing api response
+    this.usedInventory = d.usedInventory ? d.usedInventory : null
+    this.user = d.user ? d.user : null
   }
 
   toJSON() {
     return {
       ...super.toJSON(),
-      inventoryItemId: this.inventoryItemId ? this.inventoryItemId : null,
+      usedInventoryId: this.usedInventoryId ? this.usedInventoryId : null,
       partySize: this.partySize ? this.partySize : null,
       userName: this.userName ? this.userName : null,
       userEmail: this.userEmail ? this.userEmail : null
@@ -42,7 +50,7 @@ export class ReservationModel extends BaseModel {
       partySize: [
         value => !!value || 'Required.',
         value => !isNaN(value) || 'Party size must be a number.',
-        value => value && value > 0 || 'Party size must be > 0'
+        value => (value && value > 0) || 'Party size must be > 0'
       ]
     }
   }
